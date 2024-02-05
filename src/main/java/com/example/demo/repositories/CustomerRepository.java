@@ -9,7 +9,9 @@ import java.util.Optional;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
-    @Query("SELECT c FROM Customer c WHERE c.cust_name = ?1")
+
+//    @Query(value = "SELECT c FROM Customer c WHERE c.cust_name = ?1",nativeQuery = true);  // can write like this too
+    @Query("SELECT c FROM Customer c WHERE c.cust_name = ?1") // this is jpql query
     Optional<Customer> findCustomerByName(String name);
 
 }

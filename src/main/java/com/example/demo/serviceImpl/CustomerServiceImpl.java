@@ -32,7 +32,7 @@ public class CustomerServiceImpl implements CustomerService {
             BeanUtils.copyProperties(customer, customerResponse);
             customerListResponse.add(customerResponse);
         }
-
+        System.out.println("hi brother!!");
         return customerListResponse;
     }
     public CustomerResponse addNewCustomer(CustomerRequest customerRequest) {

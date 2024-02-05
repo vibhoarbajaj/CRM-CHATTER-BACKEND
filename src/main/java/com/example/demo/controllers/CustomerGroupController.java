@@ -10,15 +10,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/group")
-@CrossOrigin("*")
+@CrossOrigin(origins = "*")
 public class CustomerGroupController {
     @Autowired
-    private final CustomerGroupService customerGroupService;
+    private CustomerGroupService customerGroupService;
 
-
-    public CustomerGroupController(CustomerGroupService customerGroupService) {
-        this.customerGroupService = customerGroupService;
-    }
+//    public CustomerGroupController(CustomerGroupService customerGroupService) {
+//        this.customerGroupService = customerGroupService;
+//    }
 
     @GetMapping("/fetchAllGroups")
     public List<CustomerGroupResponse> getCustomerGroups() {
@@ -27,5 +26,11 @@ public class CustomerGroupController {
     @PostMapping("/addNewGroup")
     public CustomerGroupResponse registerNewCustomerGroups(@RequestBody CustomerGroupRequest customerGroupRequest){
         return customerGroupService.addNewGroup(customerGroupRequest);
+    }
+    @PutMapping("{cust_id}/group/{group_id}")
+    public CustomerGroupResponse addCustomerInGroup(@PathVariable("cust_id") Long cust_id,
+                                                @PathVariable("group_id") Long group_id)
+    {
+        return customerGroupService.addCustomerInGroup(cust_id,group_id);
     }
 }

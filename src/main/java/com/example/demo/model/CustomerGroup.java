@@ -2,6 +2,11 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @Entity
 @Table
 public class CustomerGroup {
@@ -11,13 +16,28 @@ public class CustomerGroup {
     @SequenceGenerator(name = "group_sequence", sequenceName = "group_sequence",allocationSize = 1)
     private Long group_id;
     private String group_name;
+    @ManyToMany
+    @JoinTable(name = "customer_in_group",
+            joinColumns = @JoinColumn(name = "group_id"),
+            inverseJoinColumns = @JoinColumn(name = "cust_id"))
+    private Set<Customer> customerList=new HashSet<>();
 
     public CustomerGroup() {
     }
 
-    public CustomerGroup(Long group_id, String group_name) {
+
+    public CustomerGroup(Long group_id, String group_name, Set<Customer> customerList) {
         this.group_id = group_id;
         this.group_name = group_name;
+        this.customerList = customerList;
+    }
+
+    public Set<Customer> getCustomerList() {
+        return customerList;
+    }
+
+    public void setCustomerList(Set<Customer> customerList) {
+        this.customerList = customerList;
     }
 
     public Long getGroup_id() {

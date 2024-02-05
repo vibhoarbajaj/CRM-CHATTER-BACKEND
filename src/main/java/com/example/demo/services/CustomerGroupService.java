@@ -9,4 +9,6 @@ public interface CustomerGroupService {
     List<CustomerGroupResponse> getAllGroups();
 
     CustomerGroupResponse addNewGroup(CustomerGroupRequest customerGroupRequest);
+
+    CustomerGroupResponse addCustomerInGroup(Long cust_id,Long group_id);
 }

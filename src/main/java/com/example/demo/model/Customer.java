@@ -1,6 +1,12 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table
@@ -12,9 +18,22 @@ public class Customer {
     private Long cust_id;
     private String cust_name;
 
-    public Customer(Long cust_id, String cust_name) {
+    @JsonIgnore // so that customer table is ignoring customerGroupList from Customer model
+    @ManyToMany(mappedBy = "customerList")
+    private Set<CustomerGroup> customerGroupList=new HashSet<>();
+
+    public Set<CustomerGroup> getCustomerGroupList() {
+        return customerGroupList;
+    }
+
+    public void setCustomerGroupList(Set<CustomerGroup> customerGroupList) {
+        this.customerGroupList = customerGroupList;
+    }
+
+    public Customer(Long cust_id, String cust_name, Set<CustomerGroup> customerGroupList) {
         this.cust_id = cust_id;
         this.cust_name = cust_name;
+        this.customerGroupList = customerGroupList;
     }
 
     public Customer() {
