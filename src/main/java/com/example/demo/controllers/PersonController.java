@@ -45,12 +45,12 @@ public class PersonController {
 //    {
 //        return personService.updatePerson(name , userName,  email , phone);
 //    }
-    @PutMapping("/{name}/updatename/{newname}")
-    public PersonResponse updateName(@PathVariable("name") String name, @PathVariable("newname") String newname) {
-        return personService.updateName(name, newname);
+    @PutMapping("/{name}/updateName/{newname}/{username}")
+    public PersonResponse updateName(@PathVariable("name") String name, @PathVariable("newname") String newname,@PathVariable("username") String userName) {
+        return personService.updateName(name, newname , userName);
     }
 
-    @PutMapping("/{userName}/updateusername/{newusername}")
+    @PutMapping("/{userName}/updateUserName/{newusername}")
     public PersonResponse updateuserName(@PathVariable("userName") String userName, @PathVariable("newusername") String newusername) {
         return personService.updateuserName(userName, newusername);
     }

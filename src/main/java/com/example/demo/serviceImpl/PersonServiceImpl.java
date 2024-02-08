@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -59,11 +60,11 @@ public class PersonServiceImpl implements PersonService {
 
     public PersonResponse addNewPerson(PersonRequest personRequest) {
         Optional<Person> personUsername = personRepository.findPersonByName(personRequest.getUserName());
-//        if (personUsername.isPresent()) {
-//            throw new IllegalStateException("error");
-//        }
-
+        if (personUsername.isPresent()) {
+           throw new IllegalStateException("error");
+        }
         Person p1 = new Person();
+        p1.setCreatedAt(LocalDateTime.now());
         BeanUtils.copyProperties(personRequest, p1);
         Person savedPerson = personRepository.save(p1);
         PersonResponse personResponse = new PersonResponse();
@@ -71,14 +72,20 @@ public class PersonServiceImpl implements PersonService {
         return personResponse;
     }
 
-    public PersonResponse updateName(String name, String newname) {
+    public PersonResponse updateName(String name, String newname,String userName) {
+        Person newP = personRepository.findByuserName(userName);
+        //Person newP = personRepository.findBYid(id);
+        //Person newPerson = personRepository.findByName(name);
+        String fetchName = newP.getName();
+    if(newP==null){
+    throw new IllegalStateException("No person with this id/name exists");
+    }
 
-        Person newPerson = personRepository.findByName(name);
-        newPerson.setName(newname);
-        personRepository.save(newPerson);
+        newP.setName(newname);
+        personRepository.save(newP);
         PersonResponse personResponse = new PersonResponse();
 
-        BeanUtils.copyProperties(newPerson, personResponse);
+        BeanUtils.copyProperties(newP, personResponse);
 
         return personResponse;
     }
@@ -86,6 +93,11 @@ public class PersonServiceImpl implements PersonService {
     public PersonResponse updateuserName(String userName, String newusername) {
 
         Person newPerson = personRepository.findByuserName(userName);
+       // Person prevPerson = personRepository.findByuserName(newusername);
+        Optional<Person> personUsername = personRepository.findPersonByName(newusername);
+        if (personUsername.isPresent()) {
+            throw new IllegalStateException("This username already exists please try again");
+        }
         newPerson.setUserName(newusername);
         personRepository.save(newPerson);
         PersonResponse personResponse = new PersonResponse();

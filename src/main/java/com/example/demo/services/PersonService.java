@@ -13,7 +13,7 @@ public interface PersonService {
 
     Person getPersonByID(Long id);
 
-    PersonResponse updateName(String name, String newname);
+    PersonResponse updateName(String name, String newname, String userName);
 
     // PersonResponse updatePerson(String name, String userName , String email , String phone);
     PersonResponse addNewPerson(PersonRequest personRequest);
