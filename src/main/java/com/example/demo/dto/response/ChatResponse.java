@@ -1,32 +1,21 @@
-package com.example.demo.model;
+package com.example.demo.dto.response;
 
-import jakarta.persistence.*;
+import com.example.demo.model.Person;
+import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
-
-@Entity
-@Table
-public class Chat {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Data
+public class ChatResponse {
     private Long id;
-
-    @ManyToMany
-    @JoinTable(
-            name = "chat_person",
-            joinColumns = @JoinColumn(name = "chat_id"),
-            inverseJoinColumns = @JoinColumn(name = "person_id")
-    )
-    private Set<Person> personSet = new HashSet<>();
-    private String name; //optional
+    private Set<Person> personSet;
+    private String name;
     private Boolean isGroup;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public Chat(Long id, Set<Person> personSet, String name, Boolean isGroup, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public ChatResponse(Long id, Set<Person> personSet, String name, Boolean isGroup, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.personSet = personSet;
         this.name = name;
@@ -35,7 +24,7 @@ public class Chat {
         this.updatedAt = updatedAt;
     }
 
-    public Chat() {
+    public ChatResponse() {
     }
 
     public Long getId() {
@@ -84,17 +73,5 @@ public class Chat {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    @Override
-    public String toString() {
-        return "Chat{" +
-                "id='" + id + '\'' +
-                ", personSet=" + personSet +
-                ", name='" + name + '\'' +
-                ", isGroup=" + isGroup +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                '}';
     }
 }
