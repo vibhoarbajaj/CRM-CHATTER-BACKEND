@@ -59,9 +59,9 @@ public class PersonServiceImpl implements PersonService {
 
     public PersonResponse addNewPerson(PersonRequest personRequest) {
         Optional<Person> personUsername = personRepository.findPersonByName(personRequest.getUserName());
-//        if (personUsername.isPresent()) {
-//            throw new IllegalStateException("error");
-//        }
+        if (personUsername.isPresent()) {
+            throw new IllegalStateException("error");
+        }
 
         Person p1 = new Person();
         BeanUtils.copyProperties(personRequest, p1);

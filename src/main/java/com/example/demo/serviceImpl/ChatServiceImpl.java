@@ -68,7 +68,7 @@ public class ChatServiceImpl implements ChatService {
         if (chatRequest.getName() != null) {
             newChat.setName(chatRequest.getName());
         }
-        newChat.setGroup(chatRequest.getGroup());
+        newChat.setIsGroup(chatRequest.getGroup());
         newChat.setPersonSet(personSet);
         newChat.setCreatedAt(LocalDateTime.now());
         newChat.setUpdatedAt(LocalDateTime.now());

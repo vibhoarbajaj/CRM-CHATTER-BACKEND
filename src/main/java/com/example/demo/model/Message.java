@@ -19,6 +19,7 @@ public class Message {
     private Long Id;
     private Long chatId;
     private Long senderId;
+    private String senderName;
     private String messageBody;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
