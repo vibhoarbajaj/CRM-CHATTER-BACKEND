@@ -39,23 +39,12 @@ public class PersonController {
         return personService.addNewPerson(personRequest);
     }
 
-    //    @PutMapping("/{name}/{userName}/{email}/{phone}")
-//    public PersonResponse updatePerson(@PathVariable("name") String name ,
-//                                       @PathVariable("userName") String userName ,
-//                                       @PathVariable("email") String email,
-//                                       @PathVariable("phone") String phone)
-//    {
-//        return personService.updatePerson(name , userName,  email , phone);
-//    }
-    @PutMapping("/{name}/updateName/{newname}/{username}")
-    public PersonResponse updateName(@PathVariable("name") String name, @PathVariable("newname") String newname,@PathVariable("username") String userName) {
-        return personService.updateName(name, newname , userName);
+
+    @PutMapping("/updatePerson/{id}")
+    public PersonResponse updatePerson(@PathVariable("id") Long id , @RequestBody PersonRequest personRequest){
+        return personService.updatePerson(id, personRequest);
     }
 
-    @PutMapping("/{userName}/updateUserName/{newusername}")
-    public PersonResponse updateuserName(@PathVariable("userName") String userName, @PathVariable("newusername") String newusername) {
-        return personService.updateuserName(userName, newusername);
-    }
 
 
 }
