@@ -31,7 +31,9 @@ public class PersonController {
     public Person getPersonById(@PathVariable("id") Long id) {
         return personService.getPersonByID(id);
     }
-
+    @GetMapping("/fetchPersonByUsername/{username}")
+    public Person getPersonById(@PathVariable("username") String userName) {
+        return personService.getPersonByuname(userName);}
     @PostMapping("/addNewPerson")
     public PersonResponse addNewPerson(@RequestBody PersonRequest personRequest) {
         return personService.addNewPerson(personRequest);

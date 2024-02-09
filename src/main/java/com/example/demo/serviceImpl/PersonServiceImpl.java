@@ -58,6 +58,13 @@ public class PersonServiceImpl implements PersonService {
         return responseList;
     }
 
+    public Person getPersonByuname(String userName){
+        Person fetchUsername = personRepository.findByuserName(userName);
+        if(fetchUsername == null){
+            throw new IllegalStateException("No Person with this user name exists");
+        }
+    return fetchUsername;
+    }
     public PersonResponse addNewPerson(PersonRequest personRequest) {
         Optional<Person> personUsername = personRepository.findPersonByName(personRequest.getUserName());
         if (personUsername.isPresent()) {

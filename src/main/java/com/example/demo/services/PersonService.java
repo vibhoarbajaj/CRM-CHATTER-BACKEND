@@ -19,4 +19,6 @@ public interface PersonService {
     PersonResponse addNewPerson(PersonRequest personRequest);
 
     PersonResponse updateuserName(String userName, String newusername);
+
+    Person getPersonByuname(String userName);
 }
