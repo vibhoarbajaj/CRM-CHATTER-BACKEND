@@ -13,7 +13,11 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
     @Query("SELECT p FROM Person p WHERE p.userName = ?1")
         // this is jpql query
     Optional<Person> findPersonByName(String username);
-
+//    @Query("SELECT p FROM Person p WHERE p.userName = ?1")
+//        // this is jpql query
+//    Person findPersonByuName(String username);
+////@Query("select p from Person where p.id=?1")
+//Person findBYid(Long id);
     @Query("select p from Person p where p.name like ?1%")
     List<Person> findFilteredName(String name);
 

@@ -8,7 +8,9 @@ import com.example.demo.services.PersonService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -57,41 +59,75 @@ public class PersonServiceImpl implements PersonService {
         return responseList;
     }
 
+    public Person getPersonByuname(String userName){
+        Person fetchUsername = personRepository.findByuserName(userName);
+        if(fetchUsername == null){
+            throw new IllegalStateException("No Person with this user name exists");
+        }
+    return fetchUsername;
+    }
     public PersonResponse addNewPerson(PersonRequest personRequest) {
         Optional<Person> personUsername = personRepository.findPersonByName(personRequest.getUserName());
         if (personUsername.isPresent()) {
             throw new IllegalStateException("error");
         }
-
         Person p1 = new Person();
+        p1.setCreatedAt(LocalDateTime.now());
         BeanUtils.copyProperties(personRequest, p1);
         Person savedPerson = personRepository.save(p1);
         PersonResponse personResponse = new PersonResponse();
         BeanUtils.copyProperties(savedPerson, personResponse);
         return personResponse;
     }
+public PersonResponse updatePerson(Long id  , PersonRequest personRequest){
+        Person existingPerson = personRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Person with id " + id + " not found"));
+//    if (!personRepository.existsById(personRequest.getId())){
+//        throw new IllegalArgumentException("Chat with id " + personRequest.getId() + " does not exist");
+//    }
+   // existingPerson.setId(personRequest.getId());
+    existingPerson.setEmail(personRequest.getEmail());
+    existingPerson.setPhone(personRequest.getPhone());
+    existingPerson.setName(personRequest.getName());
+    existingPerson.setUserName(personRequest.getUserName());
+    Person savePerson = personRepository.save(existingPerson);
 
-    public PersonResponse updateName(String name, String newname) {
-
-        Person newPerson = personRepository.findByName(name);
-        newPerson.setName(newname);
-        personRepository.save(newPerson);
-        PersonResponse personResponse = new PersonResponse();
-
-        BeanUtils.copyProperties(newPerson, personResponse);
-
-        return personResponse;
+    PersonResponse personResponse= new PersonResponse();
+    BeanUtils.copyProperties(savePerson, personResponse);
+    return personResponse;
     }
-
-    public PersonResponse updateuserName(String userName, String newusername) {
-
-        Person newPerson = personRepository.findByuserName(userName);
-        newPerson.setUserName(newusername);
-        personRepository.save(newPerson);
-        PersonResponse personResponse = new PersonResponse();
-
-        BeanUtils.copyProperties(newPerson, personResponse);
-
-        return personResponse;
-    }
+//    public PersonResponse updateName(String name, String newname,String userName) {
+//        Person newP = personRepository.findByuserName(userName);
+//        //Person newP = personRepository.findBYid(id);
+//        //Person newPerson = personRepository.findByName(name);
+//        String fetchName = newP.getName();
+//    if(newP==null){
+//    throw new IllegalStateException("No person with this id/name exists");
+//    }
+//
+//        newP.setName(newname);
+//        personRepository.save(newP);
+//        PersonResponse personResponse = new PersonResponse();
+//
+//        BeanUtils.copyProperties(newP, personResponse);
+//
+//        return personResponse;
+//    }
+//
+//    public PersonResponse updateuserName(String userName, String newusername) {
+//
+//        Person newPerson = personRepository.findByuserName(userName);
+//       // Person prevPerson = personRepository.findByuserName(newusername);
+//        Optional<Person> personUsername = personRepository.findPersonByName(newusername);
+//        if (personUsername.isPresent()) {
+//            throw new IllegalStateException("This username already exists please try again");
+//        }
+//        newPerson.setUserName(newusername);
+//        personRepository.save(newPerson);
+//        PersonResponse personResponse = new PersonResponse();
+//
+//        BeanUtils.copyProperties(newPerson, personResponse);
+//
+//        return personResponse;
+//    }
 }
