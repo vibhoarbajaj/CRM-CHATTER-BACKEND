@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -60,13 +61,17 @@ public class MessageServiceImpl implements MessageService {
             throw new IllegalArgumentException("Chat with id " + messageRequest.getChatId() + " does not exist");
         }
 
+        Optional<Person> person = personRepository.findById(messageRequest.getSenderId());
+
         // Check if the sender person exists
-        if (!personRepository.existsById(messageRequest.getSenderId())) {
+        if (!person.isPresent()) {
             throw new IllegalArgumentException("Person with id " + messageRequest.getSenderId() + " does not exist");
         }
+
         Message newMessage = new Message();
         newMessage.setChatId(messageRequest.getChatId());
         newMessage.setSenderId(messageRequest.getSenderId());
+        newMessage.setSenderName(person.get().getName());
         newMessage.setMessageBody(messageRequest.getMessageBody());
         newMessage.setCreatedAt(LocalDateTime.now());
         newMessage.setUpdatedAt(LocalDateTime.now());
@@ -139,7 +144,7 @@ public class MessageServiceImpl implements MessageService {
         // Create a response indicating successful deletion
         MessageResponse deletedMessageResponse = new MessageResponse();
         BeanUtils.copyProperties(existingMessage, deletedMessageResponse);
-         
+
         return deletedMessageResponse;
     }
 }

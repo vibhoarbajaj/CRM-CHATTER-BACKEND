@@ -31,5 +31,4 @@ public class Chat {
     private Boolean isGroup;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
 }
