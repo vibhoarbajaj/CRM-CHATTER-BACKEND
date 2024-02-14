@@ -104,6 +104,7 @@ public class PersonServiceImpl implements PersonService {
         if (personUsername.isPresent()) {
             //throw new IllegalStateException("Username already exists");
           return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("Username Already exists");
+//            throw new IllegalStateException("error");
         }
         Person p1 = new Person();
         p1.setCreatedAt(LocalDateTime.now());

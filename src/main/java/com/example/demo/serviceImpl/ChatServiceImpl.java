@@ -81,10 +81,10 @@ public class ChatServiceImpl implements ChatService {
 //            newChat.setListOfName(listofnames);
 //        }
         List<Chat> chatName = chatRepository.findChatName(chatRequest.getName());
-        if(!chatName.isEmpty()){
+        if (!chatName.isEmpty()) {
             return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("Chat already exists");
         }
-        if (chatRequest.getName() != null ) {
+        if (chatRequest.getName() != null) {
             newChat.setName(chatRequest.getName());
         }
         newChat.setIsGroup(chatRequest.getGroup());
@@ -102,31 +102,31 @@ public class ChatServiceImpl implements ChatService {
 
     public ResponseEntity<?> getChatsByUsersId(Long personId) {
         List<Chat> chatList = chatRepository.findChatsByPersonId(personId);
-     //  System.out.println(chatList);
-              if(chatList.isEmpty()){
-                  return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No user with id "+ personId +" present in any chat");
-              }
+        //  System.out.println(chatList);
+        if (chatList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No user with id " + personId + " present in any chat");
+        }
 
-       for(Chat c : chatList){
-           Set<Person> personSet =c.getPersonSet();
-           if(personSet.size()==2) {
-               personSet.removeIf(p -> Objects.equals(p.getId(), personId));
+        for (Chat c : chatList) {
+            Set<Person> personSet = c.getPersonSet();
+            if (personSet.size() == 2) {
+                personSet.removeIf(p -> Objects.equals(p.getId(), personId));
 
-           }
-              }
+            }
+        }
         return ResponseEntity.status(HttpStatus.OK).body(convertChatListToChatResponseList(chatList));
     }
 
     public ResponseEntity<?> addUserInChat(ChatRequest chatRequest, Long chatId) {
         // chat request m aaega List<PersonIds>
         Chat chat = chatRepository.findById(chatId).get();
-        Set<Long> personIds= chatRequest.getPersonIds();
+        Set<Long> personIds = chatRequest.getPersonIds();
 
         Set<Person> personSet = new HashSet<>(chat.getPersonSet());
         for (Long personId : personIds) {
             Person person = personRepository.findById(personId).get();
-            for(Person p : personSet){
-                if(p== person){
+            for (Person p : personSet) {
+                if (p == person) {
                     return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("Person already present in the chat");
                 }
             }
@@ -147,25 +147,25 @@ public class ChatServiceImpl implements ChatService {
         System.out.println(personSet);
         System.out.println(personIds);
         for (Long personId : personIds) {
-           // Person person = personRepository.findBYid(personId);
-            boolean b=  false;
+            // Person person = personRepository.findBYid(personId);
+            boolean b = false;
             Person removedPerson = new Person();
             for (Person p : personSet) {
                 if (Objects.equals(p.getId(), personId)) {
-                   // personSet.remove(p);
-                    removedPerson= p;
-                b= true;
-                break;
+                    // personSet.remove(p);
+                    removedPerson = p;
+                    b = true;
+                    break;
                 }
             }
-            if(b){
+            if (b) {
                 personSet.remove(removedPerson);
-            }
- else{return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Person doesn't exists");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Person doesn't exists");
             }
 
-           // if (person == null) {
-           // }
+            // if (person == null) {
+            // }
             //  else{
             //personSet.remove(person);
             //}}
@@ -174,7 +174,7 @@ public class ChatServiceImpl implements ChatService {
         Chat savedChat = chatRepository.save(chat);
         ChatResponse chatResponse = new ChatResponse();
         BeanUtils.copyProperties(savedChat, chatResponse);
-        return ResponseEntity.status(HttpStatus.OK).body(chatResponse);
+        return ResponseEntity.ok().body(chatResponse);
     }
 
 }

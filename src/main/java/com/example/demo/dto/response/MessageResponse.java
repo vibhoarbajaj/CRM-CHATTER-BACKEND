@@ -18,6 +18,7 @@ public class MessageResponse {
     private Long chatId;
     private Long senderId;
     private String messageBody;
+    private String senderName;
     private List<Person> receivers;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

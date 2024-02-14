@@ -33,5 +33,4 @@ public class Chat {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     //private List<String> listOfName;
-
 }

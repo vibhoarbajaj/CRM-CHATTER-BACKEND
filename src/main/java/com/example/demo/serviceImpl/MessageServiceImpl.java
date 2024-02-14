@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -59,40 +60,45 @@ public class MessageServiceImpl implements MessageService {
 
     public ResponseEntity<?> addNewMessage(MessageRequest messageRequest) {
         if (!chatRepository.existsById(messageRequest.getChatId())) {
-           // throw new IllegalArgumentException("Chat with id " + messageRequest.getChatId() + " does not exist");
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Chat with id " + messageRequest.getChatId() + " does not exist");
+            // throw new IllegalArgumentException("Chat with id " + messageRequest.getChatId() + " does not exist");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Chat with id " + messageRequest.getChatId() + " does not exist");
         }
 
+        Optional<Person> person = personRepository.findById(messageRequest.getSenderId());
+        if (person.isEmpty()) {
+            throw new IllegalArgumentException("Person with id " + messageRequest.getSenderId() + " does not exist");
+        }
         // Check if the sender person exists
         if (!personRepository.existsById(messageRequest.getSenderId())) {
             //throw new IllegalArgumentException("Person with id " + messageRequest.getSenderId() + " does not exist");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Person with id " + messageRequest.getSenderId() + " does not exist");
-
         }
-        Message newMessage = new Message();
-       // newMessage.setGroupName(messageRequest.ge);
-        newMessage.setChatId(messageRequest.getChatId());
-        newMessage.setSenderId(messageRequest.getSenderId());
-        newMessage.setMessageBody(messageRequest.getMessageBody());
-        newMessage.setCreatedAt(LocalDateTime.now());
-        newMessage.setUpdatedAt(LocalDateTime.now());
+            Message newMessage = new Message();
+            // newMessage.setGroupName(messageRequest.ge);
+            newMessage.setChatId(messageRequest.getChatId());
+            newMessage.setSenderId(messageRequest.getSenderId());
+            newMessage.setSenderName(person.get().getName());
+            newMessage.setMessageBody(messageRequest.getMessageBody());
+            newMessage.setCreatedAt(LocalDateTime.now());
+            newMessage.setUpdatedAt(LocalDateTime.now());
 
-        List<Person> receiverPersonList = new ArrayList<>();
+            List<Person> receiverPersonList = new ArrayList<>();
 
-        for (Long id : messageRequest.getReceiversId()) {
-            Person receiverPerson = personRepository.findById(id).get();
-            receiverPersonList.add(receiverPerson);
+            for (Long id : messageRequest.getReceiversId()) {
+                Person receiverPerson = personRepository.findById(id).get();
+                receiverPersonList.add(receiverPerson);
+            }
+
+            newMessage.setReceivers(receiverPersonList);
+
+            Message savedMessage = messageRepository.save(newMessage);
+
+            MessageResponse messageResponse = new MessageResponse();
+            BeanUtils.copyProperties(savedMessage, messageResponse);
+
+            return ResponseEntity.status(HttpStatus.OK).body(messageResponse);
         }
-
-        newMessage.setReceivers(receiverPersonList);
-
-        Message savedMessage = messageRepository.save(newMessage);
-
-        MessageResponse messageResponse = new MessageResponse();
-        BeanUtils.copyProperties(savedMessage, messageResponse);
-
-        return ResponseEntity.status(HttpStatus.OK).body(messageResponse);
-    }
+      //  return null;
 
     public ResponseEntity<?> updateMessage(Long msgId, MessageRequest messageRequest) {
         // Check if the message with msgId exists
@@ -151,7 +157,7 @@ public class MessageServiceImpl implements MessageService {
         // Create a response indicating successful deletion
         MessageResponse deletedMessageResponse = new MessageResponse();
         BeanUtils.copyProperties(existingMessage, deletedMessageResponse);
-         
+
         return ResponseEntity.status(HttpStatus.OK).body(deletedMessageResponse);
     }
 }

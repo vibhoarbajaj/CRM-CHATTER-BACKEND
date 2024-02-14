@@ -13,6 +13,7 @@ import java.util.List;
 public class MessageRequest {
     private Long chatId;
     private Long senderId;
+    private String senderName;
     private String messageBody;
     private List<Long> receiversId;
 }
