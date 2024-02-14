@@ -102,12 +102,14 @@ public class MessageServiceImpl implements MessageService {
         // Check if the chat with the given chatId exists
         if (!chatRepository.existsById(messageRequest.getChatId())) {
            // throw new IllegalArgumentException("Chat with id " + messageRequest.getChatId() + " does not exist");
-        ResponseEntity.status(HttpStatus.NOT_FOUND).body("Chat with id " + messageRequest.getChatId() + " does not exist");
+      return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Chat with id " + messageRequest.getChatId() + " does not exist");
         }
 
         // Check if the sender person with the given senderId exists
         if (!personRepository.existsById(messageRequest.getSenderId())) {
-            throw new IllegalArgumentException("Person with id " + messageRequest.getSenderId() + " does not exist");
+//throw new IllegalArgumentException("Person with id " + messageRequest.getSenderId() + " does not exist");
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Person with id " + messageRequest.getSenderId() + " does not exist");
+
         }
 
         // Update message properties
@@ -132,7 +134,7 @@ public class MessageServiceImpl implements MessageService {
         MessageResponse messageResponse = new MessageResponse();
         BeanUtils.copyProperties(savedMessage, messageResponse);
 
-        return messageResponse;
+        return ResponseEntity.status(HttpStatus.OK).body(messageResponse);
     }
 
     public ResponseEntity<?> deleteMessage(Long msgId) {

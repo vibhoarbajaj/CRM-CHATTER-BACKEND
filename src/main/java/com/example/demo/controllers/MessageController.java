@@ -43,7 +43,7 @@ public class MessageController {
     }
 
     @PutMapping("/updateMessage/{msgId}")
-    public MessageResponse updateMessage(@PathVariable("msgId") Long msgId,
+    public ResponseEntity<?> updateMessage(@PathVariable("msgId") Long msgId,
                                          @RequestBody MessageRequest messageRequest) {
         return messageService.updateMessage(msgId, messageRequest);
     }

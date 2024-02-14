@@ -15,7 +15,7 @@ public interface MessageService {
 
     ResponseEntity<?> addNewMessage(MessageRequest messageRequest);
 
-    MessageResponse updateMessage(Long msgId, MessageRequest messageRequest);
+    ResponseEntity<?> updateMessage(Long msgId, MessageRequest messageRequest);
 
     ResponseEntity<?> deleteMessage(Long msgId);
 }
