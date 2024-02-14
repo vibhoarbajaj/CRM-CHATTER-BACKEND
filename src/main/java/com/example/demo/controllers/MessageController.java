@@ -29,14 +29,14 @@ public class MessageController {
     @GetMapping("/fetchMessagesByChatId/{chatId}")
     public List<MessageResponse> getAllMessagesByChatId(
             @PathVariable(value = "chatId") Long chatId,
-            @RequestParam(value = "pageNum", defaultValue = "1", required = false) Integer pageNum,
+            @RequestParam(value = "pageNum", defaultValue = "0", required = false) Integer pageNum,
             @RequestParam(value = "pageSz", defaultValue = "5", required = false) Integer pageSz
     ) {
         return messageService.getAllMessagesByChatId(chatId, pageNum, pageSz);
     }
 
     @PostMapping("/addNewMessage")
-    public MessageResponse addNewMessage(
+    public ResponseEntity<?> addNewMessage(
             @RequestBody MessageRequest messageRequest
     ) {
         return messageService.addNewMessage(messageRequest);
@@ -49,7 +49,7 @@ public class MessageController {
     }
 
     @DeleteMapping("/deleteMessage/{msgId}")
-    public ResponseEntity<String> deleteMessage(@PathVariable("msgId") Long msgId) {
+    public ResponseEntity<?> deleteMessage(@PathVariable("msgId") Long msgId) {
         messageService.deleteMessage(msgId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Message deleted successfully!!");
     }

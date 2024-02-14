@@ -3,7 +3,9 @@ package com.example.demo.dto.response;
 import com.example.demo.model.Person;
 import lombok.Data;
 
+import java.security.PrivateKey;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -12,11 +14,13 @@ public class ChatResponse {
     private Set<Person> personSet;
     private String name;
     private Boolean isGroup;
+  //  private List<String> listOfName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public ChatResponse(Long id, Set<Person> personSet, String name, Boolean isGroup, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public ChatResponse(Long id,Set<Person> personSet, String name, Boolean isGroup, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
+       // this.listOfName=listOfName;
         this.personSet = personSet;
         this.name = name;
         this.isGroup = isGroup;
@@ -26,6 +30,14 @@ public class ChatResponse {
 
     public ChatResponse() {
     }
+
+//    public List<String> getListOfName() {
+//        return listOfName;
+//    }
+//
+//    public void setListOfName(List<String> listOfName) {
+//        this.listOfName = listOfName;
+//    }
 
     public Long getId() {
         return id;

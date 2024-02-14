@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -31,5 +32,6 @@ public class Chat {
     private Boolean isGroup;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    //private List<String> listOfName;
 
 }

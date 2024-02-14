@@ -10,6 +10,7 @@ public class ChatRequest {
     private String name;
     private Boolean isGroup;
 
+
     public ChatRequest(Set<Long> personIds, String name, Boolean isGroup) {
         this.personIds = personIds;
         this.name = name;

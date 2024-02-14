@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 @Getter
 @ToString
+
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +23,7 @@ public class Message {
     private String messageBody;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    //private String groupName ;
 
     @ManyToMany
     @JoinTable(name = "message_to_person",

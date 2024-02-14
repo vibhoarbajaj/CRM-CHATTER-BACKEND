@@ -2,6 +2,7 @@ package com.example.demo.services;
 
 import com.example.demo.dto.request.ChatRequest;
 import com.example.demo.dto.response.ChatResponse;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -11,11 +12,11 @@ public interface ChatService {
 
     ChatResponse getChatByChatId(Long id);
 
-    List<ChatResponse> getChatsByUsersId(Long userId);
+    ResponseEntity<?> getChatsByUsersId(Long userId);
 
-    ChatResponse addNewChat(ChatRequest chatRequest);
+    ResponseEntity<?> addNewChat(ChatRequest chatRequest);
 
-    ChatResponse addUserInChat(ChatRequest chatRequest, Long chatId);
+    ResponseEntity<?> addUserInChat(ChatRequest chatRequest, Long chatId);
 
-    ChatResponse removeUserFromChat(ChatRequest chatRequest, Long chatId);
+    ResponseEntity<?> removeUserFromChat(ChatRequest chatRequest, Long chatId);
 }

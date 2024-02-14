@@ -2,6 +2,7 @@ package com.example.demo.services;
 
 import com.example.demo.dto.request.MessageRequest;
 import com.example.demo.dto.response.MessageResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,9 +13,9 @@ public interface MessageService {
 
     List<MessageResponse> getAllMessagesByChatId(Long chatId, Integer pageNum, Integer pageSz);
 
-    MessageResponse addNewMessage(MessageRequest messageRequest);
+    ResponseEntity<?> addNewMessage(MessageRequest messageRequest);
 
     MessageResponse updateMessage(Long msgId, MessageRequest messageRequest);
 
-    MessageResponse deleteMessage(Long msgId);
+    ResponseEntity<?> deleteMessage(Long msgId);
 }

@@ -14,6 +14,7 @@ import java.util.List;
 @ToString
 public class MessageResponse {
     private Long Id;
+  //  private String groupName;//
     private Long chatId;
     private Long senderId;
     private String messageBody;

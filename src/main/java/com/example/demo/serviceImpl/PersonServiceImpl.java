@@ -5,13 +5,23 @@ import com.example.demo.dto.response.PersonResponse;
 import com.example.demo.model.Person;
 import com.example.demo.repositories.PersonRepository;
 import com.example.demo.services.PersonService;
+//import exception.person.GlobalException;
+//import exception.person.IdException;
+//mport exception.person.NewGlobalException;
+import exception.person.GlobalExceptionHandler;
+import exception.person.ResourceNotFoundException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.IllegalFormatConversionException;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,99 +45,94 @@ public class PersonServiceImpl implements PersonService {
         return responseList;
     }
 
-    public Person getPersonByID(Long id) {
+    public ResponseEntity<?> getPersonByID(Long id) {
 
-        Person getPerson = personRepository.findById(id).get();
-        //  System.out.println(getPerson);
-//        if(getPer){
-//           throw new IllegalStateException("id doesnt exists!!");
-//        }
-        return getPerson;
+        Person getPerson = personRepository.findBYid(id);
+        if(getPerson == null){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No user with " + id+ " id exists");
+      // throw new NewGlobalException.ResourceNotFoundException("Nothing");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(getPerson);
     }
 
-    public List<PersonResponse> getPersonByName(String name) {
-        List<Person> allPersonfilter = personRepository.findFilteredName(name);
-        if (allPersonfilter.isEmpty()) {
-            System.out.println("No Name Found");
+    public ResponseEntity<?> getPersonByName(String name) {
+        // System.out.println("name"+name);
+
+        if (name.trim().isEmpty() || name.isEmpty()) {
+            System.out.println("hah");
+       //  throw new ResourceNotFoundException("piyush");
+       return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Name is  not acceptable");
         }
+        List<Person> allPersonfilter = personRepository.findFilteredName(name);
+
         List<PersonResponse> responseList = new ArrayList<>();
         for (Person person : allPersonfilter) {
             PersonResponse personResponse = new PersonResponse();
             BeanUtils.copyProperties(person, personResponse);
             responseList.add(personResponse);
         }
-        return responseList;
+        return ResponseEntity.status(HttpStatus.OK).body(responseList);
     }
 
-    public Person getPersonByuname(String userName){
+    public ResponseEntity<?> getPersonByuname(String userName) {
         Person fetchUsername = personRepository.findByuserName(userName);
-        if(fetchUsername == null){
-            throw new IllegalStateException("No Person with this user name exists");
+        if (fetchUsername == null) {
+       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Username Exists");
         }
-    return fetchUsername;
+        return ResponseEntity.status(HttpStatus.OK).body(fetchUsername);
     }
-    public PersonResponse addNewPerson(PersonRequest personRequest) {
+
+    public boolean validatePhone(Person p1) {
+        boolean tmpBool = true;
+        if (p1.getPhone().length() != 10) {
+            return false;
+        }
+        String tmp = p1.getPhone();
+
+        for (int i = 0; i < tmp.length(); i++) {
+            char currentChar = tmp.charAt(i);
+            if ((currentChar >= 'a' && currentChar <= 'z') || (currentChar >= 'A' && currentChar <= 'Z')) {
+                tmpBool = false;
+                break;
+            }
+        }
+        return tmpBool;
+    }
+
+    public ResponseEntity<?> addNewPerson(PersonRequest personRequest) {
         Optional<Person> personUsername = personRepository.findPersonByName(personRequest.getUserName());
         if (personUsername.isPresent()) {
-           throw new IllegalStateException("error");
+            //throw new IllegalStateException("Username already exists");
+          return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("Username Already exists");
         }
         Person p1 = new Person();
         p1.setCreatedAt(LocalDateTime.now());
         BeanUtils.copyProperties(personRequest, p1);
-        Person savedPerson = personRepository.save(p1);
-        PersonResponse personResponse = new PersonResponse();
-        BeanUtils.copyProperties(savedPerson, personResponse);
-        return personResponse;
+
+        boolean b1 = validatePhone(p1);
+        if (b1) {
+            Person savedPerson = personRepository.save(p1);
+            PersonResponse personResponse = new PersonResponse();
+            BeanUtils.copyProperties(savedPerson, personResponse);
+            return ResponseEntity.status(HttpStatus.OK).body(personResponse);
+        } else {
+            //throw new IllegalStateException("Phone number not valid");
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("This Phone number is not acceptable");
+        }
     }
-public PersonResponse updatePerson(Long id  , PersonRequest personRequest){
+
+    public PersonResponse updatePerson(Long id, PersonRequest personRequest) {
         Person existingPerson = personRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Person with id " + id + " not found"));
-//    if (!personRepository.existsById(personRequest.getId())){
-//        throw new IllegalArgumentException("Chat with id " + personRequest.getId() + " does not exist");
-//    }
-   // existingPerson.setId(personRequest.getId());
-    existingPerson.setEmail(personRequest.getEmail());
-    existingPerson.setPhone(personRequest.getPhone());
-    existingPerson.setName(personRequest.getName());
-    existingPerson.setUserName(personRequest.getUserName());
-    Person savePerson = personRepository.save(existingPerson);
 
-    PersonResponse personResponse= new PersonResponse();
-    BeanUtils.copyProperties(savePerson, personResponse);
-    return personResponse;
+        existingPerson.setEmail(personRequest.getEmail());
+        existingPerson.setPhone(personRequest.getPhone());
+        existingPerson.setName(personRequest.getName());
+        existingPerson.setUserName(personRequest.getUserName());
+        Person savePerson = personRepository.save(existingPerson);
+
+        PersonResponse personResponse = new PersonResponse();
+        BeanUtils.copyProperties(savePerson, personResponse);
+        return personResponse;
     }
-//    public PersonResponse updateName(String name, String newname,String userName) {
-//        Person newP = personRepository.findByuserName(userName);
-//        //Person newP = personRepository.findBYid(id);
-//        //Person newPerson = personRepository.findByName(name);
-//        String fetchName = newP.getName();
-//    if(newP==null){
-//    throw new IllegalStateException("No person with this id/name exists");
-//    }
-//
-//        newP.setName(newname);
-//        personRepository.save(newP);
-//        PersonResponse personResponse = new PersonResponse();
-//
-//        BeanUtils.copyProperties(newP, personResponse);
-//
-//        return personResponse;
-//    }
-//
-//    public PersonResponse updateuserName(String userName, String newusername) {
-//
-//        Person newPerson = personRepository.findByuserName(userName);
-//       // Person prevPerson = personRepository.findByuserName(newusername);
-//        Optional<Person> personUsername = personRepository.findPersonByName(newusername);
-//        if (personUsername.isPresent()) {
-//            throw new IllegalStateException("This username already exists please try again");
-//        }
-//        newPerson.setUserName(newusername);
-//        personRepository.save(newPerson);
-//        PersonResponse personResponse = new PersonResponse();
-//
-//        BeanUtils.copyProperties(newPerson, personResponse);
-//
-//        return personResponse;
-//    }
 }

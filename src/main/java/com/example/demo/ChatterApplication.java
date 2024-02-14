@@ -10,4 +10,5 @@ public class ChatterApplication {
 		SpringApplication.run(ChatterApplication.class, args);
 	}
 
+
 }
