@@ -60,8 +60,8 @@ public class PersonServiceImpl implements PersonService {
 
         if (name.trim().isEmpty() || name.isEmpty()) {
             System.out.println("hah");
-       //  throw new ResourceNotFoundException("piyush");
-       return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Name is  not acceptable");
+         throw new ResourceNotFoundException("piyush");
+//       return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Name is  not acceptable");
         }
         List<Person> allPersonfilter = personRepository.findFilteredName(name);
 

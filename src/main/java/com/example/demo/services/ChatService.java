@@ -13,6 +13,7 @@ public interface ChatService {
     ChatResponse getChatByChatId(Long id);
 
     ResponseEntity<?> getChatsByUsersId(Long userId);
+    ResponseEntity<?> getGroupsById(Long id);
 
     ResponseEntity<?> addNewChat(ChatRequest chatRequest);
 

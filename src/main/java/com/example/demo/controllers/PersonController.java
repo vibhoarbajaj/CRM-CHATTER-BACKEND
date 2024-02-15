@@ -23,7 +23,7 @@ public class PersonController {
     }
 
     @GetMapping("/filter/{name}")
-    public ResponseEntity<?> getPersonByName(@PathVariable(value = "name", required = true) String name) {
+    public ResponseEntity<?> getPersonByName(@PathVariable(value = "name", required = false) String name) {
         return personService.getPersonByName(name);
     }
 

@@ -34,6 +34,10 @@ public class ChatController {
     ) {
         return chatService.getChatByChatId(id);
     }
+    @GetMapping("/fetchGroups/{id}")
+    public ResponseEntity<?> getGroupsById(@PathVariable("id") Long id ){
+        return chatService.getGroupsById(id);
+    }
 
     @GetMapping("/fetchChatsByUserId/{userId}")
     public ResponseEntity<?> getAllChats(

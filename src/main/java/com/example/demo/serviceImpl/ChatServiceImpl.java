@@ -58,6 +58,7 @@ public class ChatServiceImpl implements ChatService {
         return chatResponse;
     }
 
+
     public ResponseEntity<?> addNewChat(ChatRequest chatRequest) {
         Set<Person> personSet = new HashSet<>();
         for (Long id : chatRequest.getPersonIds()) {
@@ -99,7 +100,20 @@ public class ChatServiceImpl implements ChatService {
 //        System.out.println(chatResponse);
         return ResponseEntity.status(HttpStatus.OK).body(chatResponse);
     }
+    public ResponseEntity<?> getGroupsById(Long personId){
+        List<Chat> c = chatRepository.findChatsByPersonId(personId);
+        if (c.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No user with id " + personId + " present in any chat");
+        }
+        List<Chat>groupChats = new ArrayList<>();
+        for(Chat chat :c){
+         if(chat.getIsGroup()){
+             groupChats.add(chat);
+         }
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(convertChatListToChatResponseList(groupChats));
 
+    }
     public ResponseEntity<?> getChatsByUsersId(Long personId) {
         List<Chat> chatList = chatRepository.findChatsByPersonId(personId);
         //  System.out.println(chatList);

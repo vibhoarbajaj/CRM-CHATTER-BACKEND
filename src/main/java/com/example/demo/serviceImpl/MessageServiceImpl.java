@@ -53,6 +53,7 @@ public class MessageServiceImpl implements MessageService {
 
     public List<MessageResponse> getAllMessagesByChatId(Long chatId, Integer pageNum, Integer pageSz) {
 //        Pageable page = PageRequest.of(pageNum, pageSz);
+
         List<Message> messageList = messageRepository.findMessagesByChatId(chatId);
 //        List<Message> messageList = messagePage.getContent();
         return convertMsgListToMsgResponseList(messageList);
@@ -66,7 +67,8 @@ public class MessageServiceImpl implements MessageService {
 
         Optional<Person> person = personRepository.findById(messageRequest.getSenderId());
         if (person.isEmpty()) {
-            throw new IllegalArgumentException("Person with id " + messageRequest.getSenderId() + " does not exist");
+           // throw new IllegalArgumentException("Person with id " + messageRequest.getSenderId() + " does not exist");
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Person with id " + messageRequest.getSenderId() + " does not exist");
         }
         // Check if the sender person exists
         if (!personRepository.existsById(messageRequest.getSenderId())) {
@@ -147,7 +149,7 @@ public class MessageServiceImpl implements MessageService {
         // Check if the message with msgId exists
         Message existingMessage = messageRepository.findBYid(msgId);
         if(existingMessage==null){
-         return   ResponseEntity.status(HttpStatus.NOT_FOUND).body("Message not Found");
+         return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Message not Found");
         }
         //System.out.println(existingMessage);
 
