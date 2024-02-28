@@ -1,6 +1,7 @@
-package exception.person;
+package com.example.demo.person;
 
 import lombok.*;
+import org.springframework.http.HttpStatus;
 
 @Data
 @NoArgsConstructor
@@ -11,4 +12,5 @@ import lombok.*;
 public class PersonApiResponse {
 private String msg;
 private Boolean success;
+private HttpStatus status;
 }

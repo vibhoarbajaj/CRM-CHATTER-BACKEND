@@ -51,7 +51,7 @@ public class ChatController {
     }
 
     // add and remove in the chat can only be used if it is a group
-    @PutMapping("/addUserInChat/{chatId}")
+    @PatchMapping ("/addUserInChat/{chatId}")
     // since there can be multiple person that can be added or removed hence send a request body or list of ids to be added or removed
     // ,but we also have to provide a chatId which we need to update
     public ResponseEntity<?> addUserInChat(@RequestBody ChatRequest chatRequest,
@@ -59,7 +59,7 @@ public class ChatController {
         return chatService.addUserInChat(chatRequest, chatId);
     }
 
-    @PutMapping("/removeUserFromChat/{chatId}")
+    @PatchMapping("/removeUserFromChat/{chatId}")
     public ResponseEntity<?> removeUserFromChat(@RequestBody ChatRequest chatRequest,
                                            @PathVariable Long chatId) {
         return chatService.removeUserFromChat(chatRequest, chatId);

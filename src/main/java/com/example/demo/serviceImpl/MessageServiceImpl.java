@@ -2,8 +2,10 @@ package com.example.demo.serviceImpl;
 
 import com.example.demo.dto.request.MessageRequest;
 import com.example.demo.dto.response.MessageResponse;
+import com.example.demo.model.Chat;
 import com.example.demo.model.Message;
 import com.example.demo.model.Person;
+import com.example.demo.person.ResourceNotFoundException;
 import com.example.demo.repositories.ChatRepository;
 import com.example.demo.repositories.MessageRepository;
 import com.example.demo.repositories.PersonRepository;
@@ -15,9 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -41,28 +41,30 @@ public class MessageServiceImpl implements MessageService {
             BeanUtils.copyProperties(msg, messageResponse);
             messageResponseList.add(messageResponse);
         }
-
         return messageResponseList;
     }
 
     public List<MessageResponse> getAllMessages() {
 //        Pageable page = PageRequest.of(pageNum, pageSz);
         List<Message> messageList = messageRepository.findAll();
+
+        messageList.sort((m1, m2) -> m1.getCreatedAt().compareTo(m2.getCreatedAt()));
         return convertMsgListToMsgResponseList(messageList);
+
     }
 
     public List<MessageResponse> getAllMessagesByChatId(Long chatId, Integer pageNum, Integer pageSz) {
 //        Pageable page = PageRequest.of(pageNum, pageSz);
-
+        Optional<Chat> c= chatRepository.findById(chatId);
         List<Message> messageList = messageRepository.findMessagesByChatId(chatId);
-//        List<Message> messageList = messagePage.getContent();
         return convertMsgListToMsgResponseList(messageList);
     }
 
     public ResponseEntity<?> addNewMessage(MessageRequest messageRequest) {
         if (!chatRepository.existsById(messageRequest.getChatId())) {
             // throw new IllegalArgumentException("Chat with id " + messageRequest.getChatId() + " does not exist");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Chat with id " + messageRequest.getChatId() + " does not exist");
+         //   return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Chat with id " + messageRequest.getChatId() + " does not exist");
+        throw new ResourceNotFoundException("Chat with id " + messageRequest.getChatId() + " does not exist");
         }
 
         Optional<Person> person = personRepository.findById(messageRequest.getSenderId());
@@ -73,7 +75,8 @@ public class MessageServiceImpl implements MessageService {
         // Check if the sender person exists
         if (!personRepository.existsById(messageRequest.getSenderId())) {
             //throw new IllegalArgumentException("Person with id " + messageRequest.getSenderId() + " does not exist");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Person with id " + messageRequest.getSenderId() + " does not exist");
+          throw new ResourceNotFoundException("Person with id " + messageRequest.getSenderId() + " does not exist");
+           // return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Person with id " + messageRequest.getSenderId() + " does not exist");
         }
             Message newMessage = new Message();
             // newMessage.setGroupName(messageRequest.ge);
@@ -83,6 +86,7 @@ public class MessageServiceImpl implements MessageService {
             newMessage.setMessageBody(messageRequest.getMessageBody());
             newMessage.setCreatedAt(LocalDateTime.now());
             newMessage.setUpdatedAt(LocalDateTime.now());
+
 
             List<Person> receiverPersonList = new ArrayList<>();
 
@@ -100,7 +104,6 @@ public class MessageServiceImpl implements MessageService {
 
             return ResponseEntity.status(HttpStatus.OK).body(messageResponse);
         }
-      //  return null;
 
     public ResponseEntity<?> updateMessage(Long msgId, MessageRequest messageRequest) {
         // Check if the message with msgId exists

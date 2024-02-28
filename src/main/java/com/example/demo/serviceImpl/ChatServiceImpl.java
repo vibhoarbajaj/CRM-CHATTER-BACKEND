@@ -1,10 +1,13 @@
 package com.example.demo.serviceImpl;
 
+import ch.qos.logback.core.joran.sanity.Pair;
 import com.example.demo.dto.request.ChatRequest;
 import com.example.demo.dto.response.ChatResponse;
 import com.example.demo.model.Chat;
+import com.example.demo.model.Message;
 import com.example.demo.model.Person;
 import com.example.demo.repositories.ChatRepository;
+import com.example.demo.repositories.MessageRepository;
 import com.example.demo.repositories.PersonRepository;
 import com.example.demo.services.ChatService;
 import org.springframework.beans.BeanUtils;
@@ -19,15 +22,19 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static java.util.Collections.sort;
+
 @Service
 public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
     private final PersonRepository personRepository;
+    private  final MessageRepository messageRepository;
 
     @Autowired
-    public ChatServiceImpl(ChatRepository chatRepository, PersonRepository personRepository) {
+    public ChatServiceImpl(ChatRepository chatRepository, PersonRepository personRepository, MessageRepository messageRepository) {
         this.chatRepository = chatRepository;
         this.personRepository = personRepository;
+        this.messageRepository = messageRepository;
     }
 
     private List<ChatResponse> convertChatListToChatResponseList(List<Chat> chatList) {
@@ -60,7 +67,7 @@ public class ChatServiceImpl implements ChatService {
 
 
     public ResponseEntity<?> addNewChat(ChatRequest chatRequest) {
-        Set<Person> personSet = new HashSet<>();
+        Set<Person> personSet = new HashSet<>()      ;
         for (Long id : chatRequest.getPersonIds()) {
             Optional<Person> personOptional = personRepository.findById(id);
             if (personOptional.isPresent()) {
@@ -82,9 +89,11 @@ public class ChatServiceImpl implements ChatService {
 //            newChat.setListOfName(listofnames);
 //        }
         List<Chat> chatName = chatRepository.findChatName(chatRequest.getName());
+        if(chatRequest.getIsGroup()){
         if (!chatName.isEmpty()) {
             return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("Chat already exists");
-        }
+        }}
+
         if (chatRequest.getName() != null) {
             newChat.setName(chatRequest.getName());
         }
@@ -114,18 +123,28 @@ public class ChatServiceImpl implements ChatService {
         return ResponseEntity.status(HttpStatus.OK).body(convertChatListToChatResponseList(groupChats));
 
     }
+
     public ResponseEntity<?> getChatsByUsersId(Long personId) {
         List<Chat> chatList = chatRepository.findChatsByPersonId(personId);
         //  System.out.println(chatList);
+//        for(Chat c : chatList){
+//            Long cId = c.getId();
+//            List<Pair<LocalDateTime, Long>> newlist = null;// created , cid
+//           List<Message> msgs= messageRepository.findMessagesByChatId(cId);
+//            msgs.sort(Comparator.comparing(Message::getUpdatedAt));
+//            Message m = msgs.get(msgs.size() - 1);
+//          newlist.add({m.getUpdatedAt(), cId});
+//
+//        }
+
         if (chatList.isEmpty()) {
+          //  if(chatList.size())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No user with id " + personId + " present in any chat");
         }
-
         for (Chat c : chatList) {
             Set<Person> personSet = c.getPersonSet();
             if (personSet.size() == 2) {
                 personSet.removeIf(p -> Objects.equals(p.getId(), personId));
-
             }
         }
         return ResponseEntity.status(HttpStatus.OK).body(convertChatListToChatResponseList(chatList));
@@ -135,7 +154,9 @@ public class ChatServiceImpl implements ChatService {
         // chat request m aaega List<PersonIds>
         Chat chat = chatRepository.findById(chatId).get();
         Set<Long> personIds = chatRequest.getPersonIds();
-
+     if(personIds.size()<2){
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("incorrect request");
+     }
         Set<Person> personSet = new HashSet<>(chat.getPersonSet());
         for (Long personId : personIds) {
             Person person = personRepository.findById(personId).get();
@@ -147,6 +168,7 @@ public class ChatServiceImpl implements ChatService {
             personSet.add(person);
         }
         chat.setPersonSet(personSet);
+        chat.setUpdatedAt(LocalDateTime.now());
         Chat savedChat = chatRepository.save(chat);
         ChatResponse chatResponse = new ChatResponse();
         BeanUtils.copyProperties(savedChat, chatResponse);

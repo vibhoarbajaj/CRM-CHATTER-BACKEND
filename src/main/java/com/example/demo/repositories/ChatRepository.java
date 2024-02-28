@@ -14,4 +14,6 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
 
     @Query("select c from Chat c where c.name = ?1")
     List<Chat> findChatName(String name);
+   @Query("select c from Chat c where c.id =?1")
+    Chat findChatBYId(Long chatId);
 }
